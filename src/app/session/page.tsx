@@ -139,19 +139,8 @@ export default function SessionPage() {
           router.push(`/result?imageUrl=${encodeURIComponent(data.imageUrl)}&analysisText=${encodeURIComponent(data.analysisText || data.message)}`);
         }
       } else if (data.type === 'final') {
-        // 检查 JSON 数据是否完整且对话确认结束
-        if ((data.rawData?.isFinal === true && data.rawData?.status === 'completed') || data.imageUrl) {
-          // 返回了 imageUrl 或 isFinal 为 true 且 status 为 completed，引导用户跳转到 /result 页面
-          router.push(`/result?imageUrl=${encodeURIComponent(data.imageUrl || '')}&analysisText=${encodeURIComponent(data.analysisText || '')}`);
-        } else {
-          // 不满足跳转条件，将消息作为普通对话显示
-          const assistantMsg: ChatMessage = {
-            id: uid(),
-            role: "assistant",
-            content: data.message || "会话已完成",
-          };
-          setMessages((prev) => [...prev, assistantMsg]);
-        }
+        // 当返回type为final时，说明已经完成了所有意象采集并生成了分析文本，直接跳转到result页面
+        router.push(`/result?imageUrl=${encodeURIComponent(data.imageUrl || '')}&analysisText=${encodeURIComponent(data.analysisText || '')}`);
       }
     } catch (error: any) {
       // 忽略取消请求的错误

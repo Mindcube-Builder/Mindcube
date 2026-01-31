@@ -1,15 +1,16 @@
 'use client';
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 export default function ResultPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const imageUrl = searchParams.get('imageUrl') || '';
   const analysisText = searchParams.get('analysisText') || '';
@@ -53,9 +54,10 @@ export default function ResultPage() {
       
       if (data.type === 'final' && data.imageUrl) {
         // 更新URL参数以显示生成的图片
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.set('imageUrl', data.imageUrl);
-        window.history.replaceState({}, '', newUrl);
+        const newSearchParams = new URLSearchParams();
+        newSearchParams.set('imageUrl', data.imageUrl);
+        newSearchParams.set('analysisText', analysisText);
+        router.push(`/result?${newSearchParams.toString()}`);
       } else {
         setError('生成图片失败，请重试');
       }
