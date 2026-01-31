@@ -118,16 +118,13 @@ type FinalPayload = {
 };
 
 function tryExtractFinalJson(text: string): FinalPayload | null {
-  // 优先解析 ```json``` 包裹的内容
-  const fencedMatch = text.match(/```json([\s\S]*?)```/i);
-  const candidate =
-    fencedMatch?.[1]?.trim() ??
-    (() => {
-      const first = text.indexOf("{");
-      const last = text.lastIndexOf("}");
-      if (first === -1 || last === -1 || last <= first) return null;
-      return text.slice(first, last + 1);
-    })();
+  // 只解析 ```json ``` 代码块包裹的内容，忽略普通文本中的 {}
+  const fencedMatch = text.match(/```json\s*([\s\S]*?)\s*```/i);
+  if (!fencedMatch) {
+    return null;
+  }
+
+  const candidate = fencedMatch[1].trim();
 
   if (!candidate) return null;
 
