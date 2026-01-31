@@ -132,12 +132,6 @@ export default function SessionPage() {
           content: data.message,
         };
         setMessages((prev) => [...prev, assistantMsg]);
-        
-        // 检查是否包含结束标识符
-        if (data.message.includes('[TEST_COMPLETE]') && data.imageUrl) {
-          // 包含结束标识符且有图片 URL，跳转到结果页面
-          router.push(`/result?imageUrl=${encodeURIComponent(data.imageUrl)}&analysisText=${encodeURIComponent(data.analysisText || data.message)}`);
-        }
       } else if (data.type === 'final') {
         // 当返回type为final时，说明已经完成了所有意象采集并生成了分析文本，直接跳转到result页面
         router.push(`/result?imageUrl=${encodeURIComponent(data.imageUrl || '')}&analysisText=${encodeURIComponent(data.analysisText || '')}`);

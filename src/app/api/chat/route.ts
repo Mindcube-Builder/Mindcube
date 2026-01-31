@@ -97,7 +97,9 @@ AI (Assistant)：(内部判断：立方体阶段 2/4，禁止输出 JSON) 明白
 - 必须包含字段：image_prompt, analysis_text。
 - analysis_text 必须涵盖所有五个意象的分析：自我状态（立方体）、家庭支持（梯子）、伴侣关系（马及控制欲）、未来压力（风暴）、子女/理想（花朵）。
 - 当你认为还没到"总结阶段"时，绝对不要输出这个 JSON。
-- JSON 之外的部分，请继续用自然语言陪伴式对话。`;
+- JSON 之外的部分，请继续用自然语言陪伴式对话。
+
+**完成标记**：当完成上述所有步骤后，请在最后输出 `[TEST_COMPLETE]` 标记，然后紧跟着输出 JSON 结果。`;
 
 const openai = new OpenAI({
   apiKey: process.env.SILICONFLOW_API_KEY,

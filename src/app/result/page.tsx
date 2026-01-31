@@ -89,7 +89,10 @@ export default function ResultPage() {
             <div className="relative aspect-[4/3] w-full bg-muted">
               {loading ? (
                 <div className="flex items-center justify-center h-full">
-                  <p className="text-sm text-muted-foreground">生成中...</p>
+                  <div className="text-center space-y-2">
+                    <p className="text-sm text-muted-foreground">正在生成图片...</p>
+                    <p className="text-xs text-muted-foreground">请稍候</p>
+                  </div>
                 </div>
               ) : error ? (
                 <div className="flex items-center justify-center h-full">
@@ -117,7 +120,11 @@ export default function ResultPage() {
             <h2 className="text-base font-semibold tracking-tight">心理分析报告</h2>
             <div className="mt-3 space-y-4 text-sm leading-7">
               {analysisText ? (
-                <p className="whitespace-pre-line">{analysisText}</p>
+                <div className="whitespace-pre-line">
+                  {analysisText.split('\n').map((paragraph, idx) => (
+                    paragraph.trim() && <p key={idx} className="mb-3">{paragraph}</p>
+                  ))}
+                </div>
               ) : (
                 <div className="space-y-2">
                   <div className="h-4 w-3/4 bg-muted rounded"></div>
