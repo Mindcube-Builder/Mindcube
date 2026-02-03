@@ -161,7 +161,8 @@ export async function POST(req: Request) {
           role: "system",
           content: SYSTEM_PROMPT,
         },
-        ...history,
+        // 过滤掉可能包含系统提示词的消息，只保留用户和助手的消息
+        ...history.filter(msg => msg.role === "user" || msg.role === "assistant"),
       ],
     });
 
@@ -175,13 +176,39 @@ export async function POST(req: Request) {
               .join("\n")
           : "";
 
-    const finalPayload = tryExtractFinalJson(assistantText);
+    // 确保助手回复不包含系统提示词内容和结构化指令
+    let filteredAssistantText = assistantText
+      // 移除系统提示词部分（标题和内容）
+      .replace(/(# Role|# Task|# Constraints & Rules|# 分步式意象采集 Few-shot|# 关于最终 JSON 输出).*?(?=\n\n|$)/gs, '')
+      // 移除结构化指令，如"(沙漠环境构建)"、"(Phase 1)"等
+      .replace(/\([^)]*?(环境构建|等待用户|意象引导|Phase \d|Step \d)[^)]*?\)/gi, '')
+      // 移除内心独白和旁白，如"(伴随轻柔的呼吸声)"、"(内部判断：...)"等
+      .replace(/\([^)]*?(伴随|轻柔|呼吸声|内部判断|内心|独白|思考|心理|判断|注意|提醒|记录|禁止|输出)[^)]*?\)/gi, '')
+      // 移除所有以"(内部"、"(心理"、"(判断"等开头的括号内容
+      .replace(/\((?:内部|心理|判断|注意|提醒|记录|禁止|输出|当前|阶段|轮次).*?\)/gi, '')
+      // 移除可能的中文冒号后的指令性内容（如"内部判断："）
+      .replace(/（[^）]*?(内部|判断|注意|提醒|记录|禁止|输出)[^）]*?）/gi, '')
+      // 移除多余的空行
+      .replace(/\n{3,}/g, '\n\n')
+      // 移除首尾空白
+      .trim();
+    
+    // 开发模式下在控制台输出原始响应和过滤后响应，便于调试
+    if (process.env.NODE_ENV === 'development') {
+      console.log('\n=== AI 原始响应 ===');
+      console.log(assistantText);
+      console.log('\n=== 过滤后响应 ===');
+      console.log(filteredAssistantText);
+      console.log('\n==================\n');
+    }
+
+    const finalPayload = tryExtractFinalJson(filteredAssistantText);
 
     // 没有检测到有效 JSON：正常返回对话文本
     if (!finalPayload) {
       return NextResponse.json({
         type: "message",
-        message: assistantText,
+        message: filteredAssistantText,
       });
     }
 
