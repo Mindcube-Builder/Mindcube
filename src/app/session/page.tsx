@@ -27,7 +27,7 @@ export default function SessionPage() {
     {
       id: uid(),
       role: "assistant",
-      content: "欢迎来到 Mindshift。我们即将开启一场奇妙的心灵旅程，如果你准备好了，请对我说\"开始\"吧！",
+      content: "欢迎来到 MINDCUBE。我们即将开启一场奇妙的心灵旅程，如果你准备好了，请对我说\"开始\"吧！",
     },
   ]);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -191,7 +191,7 @@ export default function SessionPage() {
           <div>
             <h1 className="text-lg font-semibold tracking-tight">Session</h1>
             <p className="text-sm text-muted-foreground">
-              极简对话（语音输入/语音播放为浏览器能力演示）
+              开启一场属于您的<span className="animate-fadeIn">心灵奇旅</span>
             </p>
           </div>
 
